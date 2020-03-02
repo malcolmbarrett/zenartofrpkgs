@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Zen and the Art of R Package Development</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Malcolm Barrett" />
+    <meta name="date" content="2020-03-02" />
+    <link href="libs/animate.css-xaringan/animate.fade.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/text-poster/text-poster.css" rel="stylesheet" />
+    <script src="libs/text-poster/text-poster.js"></script>
+    <script src="libs/text-poster/text-poster-init.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: right middle hide-count
+background-color: white
+background-image: url(img/enso.jpg)
+background-position: left
+
+&lt;link href="https://fonts.googleapis.com/css?family=Cedarville+Cursive|Karla|Montserrat|Open+Sans|Quattrocento|Raleway&amp;display=swap" rel="stylesheet"&gt;
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+a, a &gt; code {
+  color: #F12000FF;
+  text-decoration: none;
+}
+
+em {
+  color: #D55E00FF;
+  font-style: normal;
+}
+
+del {
+  color: #E5E5E5;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.inverse del {
+  color: #6C7B7F;
+}
+
+.bg-white-o90{
+   background-color: rgba(255, 255, 255, 0.9);
+}
+
+.large { font-size: 175% }
+
+.hide-count .remark-slide-number {
+  display: none;
+}
+
+.text-poster {
+	font-family: 'Cinzel', serif;
+}
+
+.inverse {
+  color: #b9bfca;
+  background-color: #282D35
+}
+
+.inverse.remark-slide-number {
+  color: #b9bfca;
+}
+
+.remark-code-line-highlighted {
+  color: #D55E00FF;
+  background-color: transparent;
+}
+
+.remark-inline-code {
+  color: #b9bfca;
+}
+
+.h2 {
+  font-family: 'Karla'
+}
+&lt;/style&gt;
+
+.pull-right[
+  # Zen and the Art of R Package development
+]
+
+Malcolm Barrett
+
+&lt;svg style="height:0.8em;top:.04em;position:relative;fill:#282D35;" viewBox="0 0 512 512"&gt;&lt;path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/&gt;&lt;/svg&gt; @malco_barrett
+
+---
+
+# rstudio::conf(2020L)
+
+---
+
+# rstudio::conf(2020L)
+
+## [My Organizaton's First R Package](https://my-org-first-pkg-2020.netlify.com/) 
+
+---
+
+# rstudio::conf(2020L)
+
+## ~~My Organizaton's First R Package~~
+## [R Markdown Driven Development](https://resources.rstudio.com/rstudio-conf-2020/rmarkdown-driven-development-emily-riederer) 
+
+---
+
+
+class: center middle 
+
+<div class="text-poster" style="width:100%;height:100%;padding:1em;">
+<div class="text-poster__text" data-text="If you do not see the Way,&#10;  you do not see it &#10;  even as you walk on it"></div>
+</div>
+
+.footnote.pull-right[— Sandokai]
+
+---
+
+class: center middle
+
+<div class="text-poster" style="width:100%;height:100%;padding:1em;">
+<div class="text-poster__text" data-text="If you do not see the R Package,&#10;  you do not see it &#10;  even as you develop it"></div>
+</div>
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_1.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;structure your project</em>
+</h1>
+</div>
+
+---
+
+class: inverse, large
+
+```
+├── data/
+├── reports/
+├── scripts/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/
+├── reports/
+*├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+*├── data/
+├── reports/
+├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+*├── vignettes/
+├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+├── vignettes/ 
+├── R/
+*├── man/
+*├── tests/
+*├── DESCRIPTION
+*├── NAMESPACE
+└── analysis.Rproj
+```
+
+---
+
+class: middle, inverse
+
+![](img/svg/create_package.svg)&lt;!-- --&gt;
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+├── vignettes/ 
+├── R/
+├── man/ 
+├── tests/ 
+*├── DESCRIPTION
+├── NAMESPACE
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+```
+
+---
+
+class: middle, inverse
+
+![](img/svg/create_project.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_2.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;write R code</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/write_code.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_r.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/write_functions.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/load_all.svg)&lt;!-- --&gt;
+
+---
+
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_3.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;declare your dependencies</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/write_library.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_package.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_package_code.svg)&lt;!-- --&gt;
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+```
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+*Imports: 
+*    ggplot2
+*    dplyr
+```
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_package_install.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_4.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;test your code</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/fiddle.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_test.svg)&lt;!-- --&gt;
+
+---
+
+class: inverse, center, middle, hide-count
+
+# let's take a breath
+
+---
+
+class: inverse
+
+# *Use a description file*
+
+---
+
+class: inverse
+
+# ~~Use a description file~~
+# *Write code as functions*
+---
+
+class: inverse
+
+# ~~Use a description file~~
+# ~~Write code as functions~~
+# *Write down your tests; automate them*
+
+---
+
+class: center middle 
+
+<div class="text-poster" style="width:100%;height:100%;padding:1em;">
+<div class="text-poster__text" data-text="Each of you is perfect the way you are... &#10;  and you can use a &#10;  little improvement."></div>
+</div>
+
+.footnote.pull-right[— Shunryu Suzuki Roshi]
+
+---
+
+class: center middle 
+
+<div class="text-poster" style="width:100%;height:100%;padding:1em;">
+<div class="text-poster__text" data-text="Each package is perfect the way it is... &#10;  and it can use a &#10;  little improvement"></div>
+</div>
+
+.footnote.pull-right[— Hadley Wickham]
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_5.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;document your code</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/comment.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_roxygen_rmd.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+```
+#' Plot mean sepal length by species
+#'
+#' @param size the size of the points
+#'
+#' @return a ggplot
+#' @export
+#'
+#' @examples
+#'
+#' plot_iris()
+#'
+plot_iris &lt;- function(size = 2) {
+  iris %&gt;%
+    dplyr::group_by(Species) %&gt;%
+    dplyr::summarize(mean_sepal_length = mean(Sepal.Length)) %&gt;%
+    ggplot2::ggplot(ggplot2::aes(mean_sepal_length, Species)) +
+    ggplot2::geom_point(size = 2)
+}
+```
+
+---
+
+class: middle, inverse
+
+![](img/svg/document.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_6.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;clean your data</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_data_raw.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_data.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_7.png)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;write reports</em>
+</h1>
+</div>
+---
+
+class: middle, inverse
+
+![](img/svg/use_vignette.svg)&lt;!-- --&gt;
+
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_inst.svg)&lt;!-- --&gt;
+
+---
+
+class: middle, inverse
+
+![](img/svg/use_toplevel.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_8.png)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>You already&lt;br&gt;share your code</em>
+</h1>
+</div>
+
+---
+
+class: middle, inverse
+
+![](img/svg/install.svg)&lt;!-- --&gt;
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_9.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>Coming home&lt;br&gt;to R packages</em>
+</h1>
+</div>
+
+---
+
+class: inverse, center, middle
+
+# [R Markdown Driven Development](https://emilyriederer.netlify.com/post/rmarkdown-driven-development/)
+
+---
+
+class: inverse, center, middle
+
+# [rrtools](https://github.com/benmarwick/rrtools)
+
+---
+
+class: inverse, center, middle
+
+# [golem](https://thinkr-open.github.io/golem/)
+
+---
+
+class: inverse, center, middle
+
+# an invitation 
+
+--
+
+## *create a package: a personal R package, something for your work, or turn a project into a package*
+
+---
+
+class: center middle 
+
+<div class="text-poster" style="width:100%;height:55%;padding:1em;">
+<div class="text-poster__text" data-text="The bad news is you’re falling &#10;  through the air, nothing to hang on to, no parachute.&#10;  The good news is there’s no ground."></div>
+</div>
+
+.footnote.pull-right[— Chögyam Trungpa Rinpoche]
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_10.jpg)
+background-size: cover
+
+<div class="f1 bg-white-o90 pa6 shadow-3 h-75">
+<h1>
+<em>What now?</em>
+</h1>
+</div>
+
+---
+
+
+class: inverse, center, middle
+
+# [R Packages, 2nd Edition: Whole Game](https://r-pkgs.org/whole-game.html)
+
+---
+
+class: middle, inverse
+
+![](img/svg/goodbye.svg)&lt;!-- --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

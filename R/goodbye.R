@@ -1,0 +1,9 @@
+message
+name
+twitter
+github
+website
+r_courses
+slides_made_with
+also
+art_by

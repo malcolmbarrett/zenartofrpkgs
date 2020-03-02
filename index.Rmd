@@ -1,0 +1,680 @@
+---
+title: "Zen and the Art of R Package Development"
+author: "Malcolm Barrett"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      titleSlideClass: ["bottom", "left"]
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: "16:9"
+      countIncrementalSlides: true
+---
+
+class: right middle hide-count
+background-color: white
+background-image: url(img/enso.jpg)
+background-position: left
+
+<link href="https://fonts.googleapis.com/css?family=Cedarville+Cursive|Karla|Montserrat|Open+Sans|Quattrocento|Raleway&display=swap" rel="stylesheet">
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(highlight = TRUE)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+mono_light(
+  white_color = "#fff",
+  header_font_google = google_font("Cedarville Cursive", "600"),
+  text_font_google = google_font("Karla", "300", "300i"),
+  code_font_google = google_font("Fira Code"),
+  text_font_size = "24px",
+  code_font_size = "1.2em"
+)
+
+opaque_box <- function(x) {
+  htmltools::tags$div(
+    class = "f1 bg-white-o90 pa6 shadow-3 h-75",
+    htmltools::tags$h1(htmltools::tags$em(x))
+  )
+}
+
+```
+
+```{r xaringan-animate-all, echo=FALSE}
+xaringanExtra::use_animate_all("fade")
+xaringanExtra::use_tachyons()
+xaringanExtra::use_text_poster()
+```
+
+```{css echo=FALSE}
+a, a > code {
+  color: #F12000FF;
+  text-decoration: none;
+}
+
+em {
+  color: #D55E00FF;
+  font-style: normal;
+}
+
+del {
+  color: #E5E5E5;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.inverse del {
+  color: #6C7B7F;
+}
+
+.bg-white-o90{
+   background-color: rgba(255, 255, 255, 0.9);
+}
+
+.large { font-size: 175% }
+
+.hide-count .remark-slide-number {
+  display: none;
+}
+
+.text-poster {
+	font-family: 'Cinzel', serif;
+}
+
+.inverse {
+  color: #b9bfca;
+  background-color: #282D35
+}
+
+.inverse.remark-slide-number {
+  color: #b9bfca;
+}
+
+.remark-code-line-highlighted {
+  color: #D55E00FF;
+  background-color: transparent;
+}
+
+.remark-inline-code {
+  color: #b9bfca;
+}
+
+.h2 {
+  font-family: 'Karla'
+}
+```
+
+.pull-right[
+  # Zen and the Art of R Package development
+]
+
+Malcolm Barrett
+
+`r fontawesome::fa("twitter", fill = "#282D35")` @malco_barrett
+
+---
+
+# rstudio::conf(2020L)
+
+---
+
+# rstudio::conf(2020L)
+
+## [My Organizaton's First R Package](https://my-org-first-pkg-2020.netlify.com/) 
+
+---
+
+# rstudio::conf(2020L)
+
+## ~~My Organizaton's First R Package~~
+## [R Markdown Driven Development](https://resources.rstudio.com/rstudio-conf-2020/rmarkdown-driven-development-emily-riederer) 
+
+---
+
+
+class: center middle 
+
+`r xaringanExtra::text_poster(
+  "If you do not see the Way,
+  you do not see it 
+  even as you walk on it"
+)`
+
+.footnote.pull-right[— Sandokai]
+
+---
+
+class: center middle
+
+`r xaringanExtra::text_poster(
+  "If you do not see the R Package,
+  you do not see it 
+  even as you develop it"
+)`
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_1.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>structure your project")`
+
+---
+
+class: inverse, large
+
+```
+├── data/
+├── reports/
+├── scripts/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/
+├── reports/
+*├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+*├── data/
+├── reports/
+├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+*├── vignettes/
+├── R/
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+├── vignettes/ 
+├── R/
+*├── man/
+*├── tests/
+*├── DESCRIPTION
+*├── NAMESPACE
+└── analysis.Rproj
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/create_package.svg")
+```
+
+---
+
+class: inverse, large
+
+```
+├── data/ 
+├── vignettes/ 
+├── R/
+├── man/ 
+├── tests/ 
+*├── DESCRIPTION
+├── NAMESPACE
+└── analysis.Rproj
+```
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/create_project.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_2.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>write R code")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/write_code.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_r.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/write_functions.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/load_all.svg")
+```
+
+---
+
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_3.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>declare your dependencies")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/write_library.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_package.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_package_code.svg")
+```
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+```
+
+---
+
+class: inverse, large
+
+```
+Package: zenartofrpkgs
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Malcolm",
+           family = "Barrett",
+           role = c("aut", "cre"),
+           email = "malcolmbarrett@gmail.com",
+           comment = c(ORCID = "0000-0003-0299-5825"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+*Imports: 
+*    ggplot2
+*    dplyr
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_package_install.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_4.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>test your code")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/fiddle.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_test.svg")
+```
+
+---
+
+class: inverse, center, middle, hide-count
+
+# let's take a breath
+
+---
+
+class: inverse
+
+# *Use a description file*
+
+---
+
+class: inverse
+
+# ~~Use a description file~~
+# *Write code as functions*
+---
+
+class: inverse
+
+# ~~Use a description file~~
+# ~~Write code as functions~~
+# *Write down your tests; automate them*
+
+---
+
+class: center middle 
+
+`r xaringanExtra::text_poster(
+  "Each of you is perfect the way you are... 
+  and you can use a 
+  little improvement."
+)`
+
+.footnote.pull-right[— Shunryu Suzuki Roshi]
+
+---
+
+class: center middle 
+
+`r xaringanExtra::text_poster(
+  "Each package is perfect the way it is... 
+  and it can use a 
+  little improvement"
+)`
+
+.footnote.pull-right[— Hadley Wickham]
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_5.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>document your code")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/comment.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_roxygen_rmd.svg")
+```
+
+---
+
+class: middle, inverse
+
+```
+#' Plot mean sepal length by species
+#'
+#' @param size the size of the points
+#'
+#' @return a ggplot
+#' @export
+#'
+#' @examples
+#'
+#' plot_iris()
+#'
+plot_iris <- function(size = 2) {
+  iris %>%
+    dplyr::group_by(Species) %>%
+    dplyr::summarize(mean_sepal_length = mean(Sepal.Length)) %>%
+    ggplot2::ggplot(ggplot2::aes(mean_sepal_length, Species)) +
+    ggplot2::geom_point(size = 2)
+}
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/document.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_6.jpg)
+background-size: cover
+
+`r opaque_box("You already<br>clean your data")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_data_raw.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_data.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_7.png)
+background-size: cover
+
+`r opaque_box("You already<br>write reports")`
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_vignette.svg")
+```
+
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_inst.svg")
+```
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/use_toplevel.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_8.png)
+background-size: cover
+
+`r opaque_box("You already<br>share your code")`
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/install.svg")
+```
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_9.jpg)
+background-size: cover
+
+`r opaque_box("Coming home<br>to R packages")`
+
+---
+
+class: inverse, center, middle
+
+# [R Markdown Driven Development](https://emilyriederer.netlify.com/post/rmarkdown-driven-development/)
+
+---
+
+class: inverse, center, middle
+
+# [rrtools](https://github.com/benmarwick/rrtools)
+
+---
+
+class: inverse, center, middle
+
+# [golem](https://thinkr-open.github.io/golem/)
+
+---
+
+class: inverse, center, middle
+
+# an invitation 
+
+--
+
+## *create a package: a personal R package, something for your work, or turn a project into a package*
+
+---
+
+class: center middle 
+
+`r xaringanExtra::text_poster(
+  "The bad news is you’re falling 
+  through the air, nothing to hang on to, no parachute.
+  The good news is there’s no ground.",
+  height = "55%"
+)`
+
+.footnote.pull-right[— Chögyam Trungpa Rinpoche]
+
+---
+
+class: center, middle, hide-count
+background-image: url(img/oxherding_10.jpg)
+background-size: cover
+
+`r opaque_box("What next?")`
+
+---
+
+
+class: inverse, center, middle
+
+# [R Packages, 2nd Edition: Whole Game](https://r-pkgs.org/whole-game.html)
+
+---
+
+class: middle, inverse
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/svg/goodbye.svg")
+```
+
