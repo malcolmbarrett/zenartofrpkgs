@@ -662,7 +662,7 @@ class: center, middle, hide-count
 background-image: url(img/oxherding_10.jpg)
 background-size: cover
 
-`r opaque_box("What next?")`
+`r opaque_box("What<br>next?")`
 
 ---
 
