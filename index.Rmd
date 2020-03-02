@@ -57,7 +57,7 @@ xaringanExtra::use_text_poster()
 
 ```{css echo=FALSE}
 a, a > code {
-  color: #F12000FF;
+  color: #D55E00FF;
   text-decoration: none;
 }
 
