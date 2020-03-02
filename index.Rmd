@@ -638,6 +638,12 @@ class: inverse, center, middle
 
 class: inverse, center, middle
 
+# [drake](https://books.ropensci.org/drake/projects.html#workflows-as-r-packages)
+
+---
+
+class: inverse, center, middle
+
 # an invitation 
 
 --
