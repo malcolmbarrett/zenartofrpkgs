@@ -120,6 +120,7 @@ del {
 Malcolm Barrett
 
 `r fontawesome::fa("twitter", fill = "#282D35")` @malco_barrett
+
 Slides: [bit.ly/zenrpkgs](http://bit.ly/zenrpkgs)
 
 ---
